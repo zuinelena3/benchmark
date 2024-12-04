@@ -4,10 +4,16 @@
 \alias{sce_to_seuratv5}
 \title{SeuratV5 convertion}
 \usage{
-sce_to_seuratv5(obj)
+sce_to_seuratv5(obj, batch, cell_type, reduction)
 }
 \arguments{
 \item{obj}{SingleCellExperiment objcet to convert into a Seurat V3}
+
+\item{batch}{batch}
+
+\item{cell_type}{celltype}
+
+\item{reduction}{reduction name}
 }
 \description{
 SeuratV5 convertion

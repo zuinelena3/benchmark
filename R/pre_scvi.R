@@ -6,17 +6,17 @@
 #' @importFrom reticulate import
 #' @export
 #'
-scvi <- function(obj) {
+pre_scvi <- function(obj, batch, assay) {
   proc <- basiliskStart(scvi_env)
   on.exit(basiliskStop(proc))
 
-  out <- basiliskRun(proc = proc, fun = function(obj, batch, assay, dims) {
+  out <- basiliskRun(proc = proc, fun = function(obj, batch, assay) {
     scvi <- import("scvi")
 
     andata <- SCE2AnnData(obj)
     andata$layers["counts"] <- andata$X
     scvi$model$SCVI$setup_anndata(andata, layer = assay, batch_key = batch)
     return(andata)
-  }, obj = obj, batch = batch, assay = assay, dims = dims)
+  }, obj = obj, batch = batch, assay = assay)
   return(out)
 }
