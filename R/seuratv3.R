@@ -1,6 +1,9 @@
 #' SeuratV3 convertion
 #'
 #' @param obj SingleCellExperiment objcet to convert into a Seurat V3
+#' @param batch batch
+#' @param celltype celltype
+#' @param reduction reduction name
 #'
 #' @importFrom Seurat SplitObject VariableFeatures<- CreateDimReducObject
 #' @importFrom SeuratObject CreateSeuratObject
@@ -8,7 +11,7 @@
 #'
 #' @export
 #'
-sce_to_seuratv3 <- function(obj){
+sce_to_seuratv3 <- function(obj, batch, celltype, reduction){
   options(Seurat.object.assay.version = "v3")
 
   so <- CreateSeuratObject(counts = counts(obj))

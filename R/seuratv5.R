@@ -1,6 +1,9 @@
 #' SeuratV5 convertion
 #'
 #' @param obj SingleCellExperiment objcet to convert into a Seurat V3
+#' @param batch batch
+#' @param celltype celltype
+#' @param reduction reduction name
 #'
 #' @importFrom Seurat ScaleData CreateDimReducObject IntegrateLayers
 #' @importFrom SeuratObject CreateAssay5Object JoinLayers CreateSeuratObject
@@ -8,7 +11,7 @@
 #'
 #' @export
 #'
-sce_to_seuratv5 <- function(obj){
+sce_to_seuratv5 <- function(obj, batch, celltype, reduction){
   options(Seurat.object.assay.version = "v5")
 
   out <- CreateAssay5Object(counts = counts(obj), data = logcounts(obj))
