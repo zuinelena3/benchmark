@@ -190,8 +190,6 @@ scIntegration(
 \item{cell_type}{string specifying the cell-type labels}
 
 \item{METHOD}{a \code{MethodParam} object specifying the batch correction method}
-
-\item{alt_out}{alternative output: a \code{\link{AltOutput}} class}
 }
 \description{
 Generic function for defining batch effect correction methods.

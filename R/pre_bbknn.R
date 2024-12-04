@@ -11,10 +11,6 @@ pre_bbknn <- function(obj, batch, reduction){
     adata$X <- adata$layers["logcounts"]
     adata$obs$batch <- colData(obj)[, batch]
     adata$obsm["X_pca"] <- reducedDim(obj, reduction)
-
-    if (adata$n_obs > 100000) {
-      neighbors_within_batch = 25
-    } else neighbors_within_batch = 3
-    return(obj)
+    return(adata)
   }, obj = obj, batch = batch, reduction = reduction)
 }

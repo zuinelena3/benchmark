@@ -8,6 +8,10 @@ pre_scvi(obj, batch, assay)
 }
 \arguments{
 \item{obj}{SingleCellExperiment object}
+
+\item{batch}{batch}
+
+\item{assay}{assay}
 }
 \description{
 scVi

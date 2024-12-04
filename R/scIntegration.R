@@ -13,7 +13,6 @@
 #' @param genelist list containing the genes in each batch
 #' @param cell_type string specifying the cell-type labels
 #' @param METHOD a \code{MethodParam} object specifying the batch correction method
-#' @param alt_out alternative output: a \code{\link{AltOutput}} class
 #'
 #' @import methods
 #' @rdname scIntegration
@@ -52,7 +51,7 @@ setMethod("scIntegration", "combatMethod", function(obj, batch = NULL, assay = N
 setMethod("scIntegration", "seuratv3Method", function(obj, batch = NULL, assay = NULL, hvgs = NULL,
                                                       dims = NULL, reduction = NULL, anchor = NULL, k_anchor = NULL,
                                                       genelist = NULL, cell_type = NULL, METHOD) {
-  anchorset <- FindIntegrationAnchors(object.list = so_ll, reduction = anchor, anchor.features = hvgs, dims = 1:dims,  k.anchor = k_anchor, verbose = FALSE)
+  anchorset <- FindIntegrationAnchors(object.list = obj, reduction = anchor, anchor.features = hvgs, dims = 1:dims,  k.anchor = k_anchor, verbose = FALSE)
   out <- IntegrateData(anchorset = anchorset, verbose = FALSE)
 
   return(out)
@@ -141,15 +140,20 @@ setMethod("scIntegration", "bbknnMethod", function(obj, batch = NULL, assay = NU
   proc <- basiliskStart(py_env)
   on.exit(basiliskStop(proc))
 
-  out <- basiliskRun(proc = proc, fun = function(adata, batch, reduction) {
+  out <- basiliskRun(proc = proc, fun = function(obj, batch, reduction) {
     bbknn <- import("bbknn")
     sc <- import("scanpy")
     anndata <- import("anndata")
 
-    bbknn$bbknn(adata, batch_key = batch, neighbors_within_batch = as.integer(neighbors_within_batch))
+
+    if (obj$n_obs > 100000) {
+      neighbors_within_batch = 25
+    } else neighbors_within_batch = 3
+
+    bbknn$bbknn(obj, batch_key = batch, neighbors_within_batch = as.integer(neighbors_within_batch))
 
     return(obj)
-  }, obj = adata, batch = batch, reduction = reduction)
+  }, obj = obj, batch = batch, reduction = reduction)
   return(out)
 })
 
@@ -165,15 +169,15 @@ setMethod("scIntegration", "scVIMethod", function(obj, batch = NULL, assay = NUL
   proc <- basiliskStart(scvi_env)
   on.exit(basiliskStop(proc))
 
-  out <- basiliskRun(proc = proc, fun = function(andata, batch, assay, dims) {
+  out <- basiliskRun(proc = proc, fun = function(obj, batch, assay, dims) {
     scvi <- import("scvi")
 
-    model_scvi <- scvi$model$SCVI(andata, n_latent = as.integer(dims))
+    model_scvi <- scvi$model$SCVI(obj, n_latent = as.integer(dims))
     model_scvi$train()
 
-    andata$obsm["X_scVI"] <- model_scvi$get_latent_representation()
-    return(andata)
-  }, obj = andata, batch = batch, assay = assay, dims = dims)
+    obj$obsm["X_scVI"] <- model_scvi$get_latent_representation()
+    return(obj)
+  }, obj = obj, batch = batch, assay = assay, dims = dims)
 
   return(out)
 })

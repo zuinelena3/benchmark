@@ -1,6 +1,9 @@
 #' scVi
 #'
 #' @param obj SingleCellExperiment object
+#' @param batch batch
+#' @param assay assay
+#'
 #' @importFrom basilisk basiliskStart basiliskStop basiliskRun
 #' @importFrom zellkonverter SCE2AnnData
 #' @importFrom reticulate import
